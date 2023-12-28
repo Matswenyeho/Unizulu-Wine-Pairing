@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unizulu Wine Pairing Website</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;1,300&family=Roboto:wght@100;400&display=swap" rel="stylesheet">
+  
+</head>
+<body>
+    <header>
+        <nav class="navigations">
+            <img id="img" src="/images/img.jpg">
+        </nav>
+        <nav class="navigation">
+            <a href="#">Date<span></span></a>
+            <a href="">Back</a>
+            <hr>
+        </nav>
+    </header>
+    <div class="wrapper">
+        <form action="">
+            <h2>Unizulu Wine Pairing</h2>
+            <div class="box">
+                First Names<input type="text" id="firstname" placeholder="Username" required>
+            </div>
+            <div class="box">
+                Identity Number<input type="numbers" id="identity" placeholder="Enter your identity number" minlength="9" maxlength="13" required>
+            </div>
+            <div class="box">
+                Email Address<input type="email" id="email" placeholder="Enter your email address" required>
+            </div>
+            <div class="box">
+                Phone number<input type="tel" id="phone" placeholder="Enter your phone number" required>
+            </div>
+            <div class="box">
+                Residential Address<input type="address" id="resident" placeholder="Enter your residential address" required>
+            </div>
+            <div class="box">
+                Password<input type="password" id="pswd" placeholder="Password" required>
+            </div>
+            <div class="box">
+                Confirm Password<input type="password" id="confirmpswd" placeholder="Confirm Password" required>
+            </div>
+            <div class="box">
+                Job Title
+                <select class="job-title" id="jobtittle">
+                    <option value="Waiter">Waiter</option>
+                    <option value="Chef">Chef</option>
+                    <option value="Manager">Manager</option>
+                </select>
+            </div>
+            <button type="submit" id="registerbtn" class="btn">Register</button>
+        </form>
+    </div>
+</body>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase,set,ref } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyAj0TEQymgWFRnIv4pYD1LqjQSUpV8BX-g",
+      authDomain: "wine-pairing-b687e.firebaseapp.com",
+      projectId: "wine-pairing-b687e",
+      storageBucket: "wine-pairing-b687e.appspot.com",
+      messagingSenderId: "719176406355",
+      appId: "1:719176406355:web:824322ca0497bb793dbda6"
+    };
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+    const auth = getAuth();
+
+    const registerbtn = document.getElementById("registerbtn");
+
+    registerbtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        var Firstname = document.getElementById("firstname").value;
+        var Password = document.getElementById("pswd").value;
+        var JobTittle = document.getElementById("jobtittle").value;
+        var ConfirmPassword = document.getElementById("confirmpswd").value;
+        var ResidentialAddress = document.getElementById("resident").value;
+        var PhoneNumber = document.getElementById("phone").value;
+        var IdentityNumber = document.getElementById("identity").value;
+        var Email = document.getElementById("email").value;
+
+        createUserWithEmailAndPassword(auth, Email, Password)
+            .then((userCredential) => {
+                const user = userCredential.user;
+                set(ref(database, "users/" + user.uid), {
+                    Firstname: Firstname,
+                    JobTittle: JobTittle,
+                    ResidentialAddress: ResidentialAddress,
+                    PhoneNumber: PhoneNumber,
+                    IdentityNumber: IdentityNumber,
+                    Email: Email
+                });
+                alert("Successfully registered");
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+
+                alert("There's an error occurred, registration failed!");
+            });
+    });
+</script>
+</html>
