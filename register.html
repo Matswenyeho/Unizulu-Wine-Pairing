@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,12 +8,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;1,300&family=Roboto:wght@100;400&display=swap" rel="stylesheet">
-  
+    <script type="text/javascript" src="authentication.js" defer></script>
 </head>
 <body>
     <header>
         <nav class="navigations">
-            <img id="img" src="/images/img.jpg">
+            <img id="img" src="/images/img.jpg" alt="Unizulu Wine Pairing">
         </nav>
         <nav class="navigation">
             <a href="#">Date<span></span></a>
@@ -22,91 +22,145 @@
         </nav>
     </header>
     <div class="wrapper">
-        <form action="">
+        <form action="" id="registerform">
             <h2>Unizulu Wine Pairing</h2>
             <div class="box">
-                First Names<input type="text" id="firstname" placeholder="Username" required>
+                <label for="firstname">First Names</label>
+                <input type="text" id="firstname" placeholder="Username" required>
             </div>
             <div class="box">
-                Identity Number<input type="numbers" id="identity" placeholder="Enter your identity number" minlength="9" maxlength="13" required>
+                <label for="identity">Identity Number</label>
+                <input type="number" id="identity" placeholder="Enter your identity number" minlength="9" maxlength="13" required>
             </div>
             <div class="box">
-                Email Address<input type="email" id="email" placeholder="Enter your email address" required>
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="Enter your email address" required>
             </div>
             <div class="box">
-                Phone number<input type="tel" id="phone" placeholder="Enter your phone number" required>
+                <label for="phone">Phone number</label>
+                <input type="tel" id="phone" placeholder="Enter your phone number" required>
             </div>
             <div class="box">
-                Residential Address<input type="address" id="resident" placeholder="Enter your residential address" required>
+                <label for="resident">Residential Address</label>
+                <input type="text" id="resident" placeholder="Enter your residential address" required>
             </div>
             <div class="box">
-                Password<input type="password" id="pswd" placeholder="Password" required>
+                <label for="pswd">Password</label>
+                <input type="password" id="pswd" placeholder="Password" required>
             </div>
             <div class="box">
-                Confirm Password<input type="password" id="confirmpswd" placeholder="Confirm Password" required>
+                <label for="confirmpswd">Confirm Password</label>
+                <input type="password" id="confirmpswd" placeholder="Confirm Password" required>
             </div>
             <div class="box">
-                Job Title
+                <label for="jobtittle">Job Title</label>
                 <select class="job-title" id="jobtittle">
                     <option value="Waiter">Waiter</option>
-                    <option value="Chef">Chef</option>
                     <option value="Manager">Manager</option>
                 </select>
             </div>
             <button type="submit" id="registerbtn" class="btn">Register</button>
         </form>
     </div>
-</body>
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase,set,ref } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    
-    
-    const firebaseConfig = {
-      apiKey: "AIzaSyAj0TEQymgWFRnIv4pYD1LqjQSUpV8BX-g",
-      authDomain: "wine-pairing-b687e.firebaseapp.com",
-      projectId: "wine-pairing-b687e",
-      storageBucket: "wine-pairing-b687e.appspot.com",
-      messagingSenderId: "719176406355",
-      appId: "1:719176406355:web:824322ca0497bb793dbda6"
-    };
-    const app = initializeApp(firebaseConfig);
-    const database = getDatabase(app);
-    const auth = getAuth();
 
-    const registerbtn = document.getElementById("registerbtn");
+    <div id="wine-display"></div>
 
-    registerbtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        var Firstname = document.getElementById("firstname").value;
-        var Password = document.getElementById("pswd").value;
-        var JobTittle = document.getElementById("jobtittle").value;
-        var ConfirmPassword = document.getElementById("confirmpswd").value;
-        var ResidentialAddress = document.getElementById("resident").value;
-        var PhoneNumber = document.getElementById("phone").value;
-        var IdentityNumber = document.getElementById("identity").value;
-        var Email = document.getElementById("email").value;
+    <script type="text/javascript">
+        // Import Firebase functions
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        createUserWithEmailAndPassword(auth, Email, Password)
-            .then((userCredential) => {
-                const user = userCredential.user;
-                set(ref(database, "users/" + user.uid), {
-                    Firstname: Firstname,
-                    JobTittle: JobTittle,
-                    ResidentialAddress: ResidentialAddress,
-                    PhoneNumber: PhoneNumber,
-                    IdentityNumber: IdentityNumber,
-                    Email: Email
-                });
-                alert("Successfully registered");
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAj0TEQymgWFRnIv4pYD1LqjQSUpV8BX-g",
+            authDomain: "wine-pairing-b687e.firebaseapp.com",
+            projectId: "wine-pairing-b687e",
+            storageBucket: "wine-pairing-b687e.appspot.com",
+            messagingSenderId: "719176406355",
+            appId: "1:719176406355:web:824322ca0497bb793dbda6"
+        };
 
-                alert("There's an error occurred, registration failed!");
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const wineDisplay = document.getElementById("wine-display");
+
+        // Function to load and display wines
+        function displayWines(wines) {
+            wineDisplay.innerHTML = ""; // Clear previous wines
+
+            wines.forEach((wine) => {
+                const wineItem = document.createElement("li");
+                wineItem.innerHTML = `
+                    <h3>${wine.wine_name}</h3>
+                    <label for="quantity-${wine.wine_name}">Quantity: </label>
+                    <input type="number" id="quantity-${wine.wine_name}" name="quantity-${wine.wine_name}" min="1" value="1">
+                    <button onclick="addQuantity('${wine.wine_name}')">Add Quantity</button>
+                    <p id="response-${wine.wine_name}"></p>
+                `;
+                wineDisplay.appendChild(wineItem);
             });
-    });
-</script>
+        }
+
+        // Function to add quantity for a specific wine
+        function addQuantity(wineName) {
+            const quantityInput = document.getElementById(`quantity-${wineName}`);
+            const quantity = quantityInput.value;
+            const responseElement = document.getElementById(`response-${wineName}`);
+
+            if (quantity > 0) {
+                responseElement.textContent = `You have added ${quantity} of ${wineName}.`;
+
+                const wineStockRef = ref(db, 'wines-stock/' + wineName);  // Reference to the 'wines-stock' node
+                set(wineStockRef, {
+                    wine_name: wineName,
+                    quantity: quantity
+                })
+                .then(() => {
+                    console.log("Wine quantity saved to 'wines-stock'!");
+                })
+                .catch((error) => {
+                    console.error("Error saving wine quantity:", error);
+                    responseElement.textContent = "Error saving the quantity.";
+                });
+            } else {
+                responseElement.textContent = "Please enter a valid quantity.";
+            }
+        }
+
+        // Function to load wines from Firebase
+        function loadWines() {
+            const dishesRef = ref(db, 'menu/');  // Reference to the 'menu' node in Firebase
+            get(dishesRef)
+                .then((snapshot) => {
+                    if (snapshot.exists()) {
+                        const menuData = snapshot.val();
+                        let allWines = [];
+
+                        Object.values(menuData).forEach((dish) => {
+                            if (dish.wines) {
+                                Object.values(dish.wines).forEach((wine) => {
+                                    if (!allWines.some(existingWine => existingWine.wine_name === wine.wine_name)) {
+                                        allWines.push(wine);
+                                    }
+                                });
+                            }
+                        });
+
+                        displayWines(allWines);
+                    } else {
+                        wineDisplay.innerHTML = "<li>No wines available in the database.</li>";
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error getting data:", error);
+                    wineDisplay.innerHTML = "<li>Error loading wines</li>";
+                });
+        }
+
+        // Load the wines list initially
+        loadWines();
+    </script>
+</body>
 </html>

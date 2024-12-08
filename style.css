@@ -193,3 +193,74 @@
     width: 80px; 
   
   }
+
+button.edit, button.delete {
+    background-color: #f39c12;
+    margin: 5px;
+}
+
+button.delete {
+    background-color: #e74c3c;
+}
+
+
+
+
+
+ Style for the body and text 
+body {
+  font-family: 'Open Sans', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f9f9f9;
+}
+
+header {
+  background-color: #333;
+  color: white;
+  padding: 10px;
+  text-align: center;
+}
+
+header .slogan {
+  font-size: 24px;
+  margin: 0;
+}
+
+.navigation {
+  margin-top: 10px;
+}
+
+.navigation a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  margin: 0 10px;
+  font-size: 16px;
+}
+
+#menu-list {
+  padding: 20px;
+  background-color: white;
+  margin: 20px;
+  border-radius: 8px;
+}
+
+#menu-items li {
+  margin-bottom: 20px;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+#menu-items li div {
+  margin-left: 20px;
+}
+
+#menu-items img {
+  border-radius: 8px;
+}
+
+#menu-items li strong {
+  font-size: 18px;
+}
+*/

@@ -5,20 +5,122 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Unizulu Wine Pairing Website</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;1,300&family=Roboto:wght@100;400&display=swap" rel="stylesheet">
-  
+    
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, get, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAj0TEQymgWFRnIv4pYD1LqjQSUpV8BX-g",
+            authDomain: "wine-pairing-b687e.firebaseapp.com",
+            projectId: "wine-pairing-b687e",
+            storageBucket: "wine-pairing-b687e.appspot.com",
+            messagingSenderId: "719176406355",
+            appId: "1:719176406355:web:824322ca0497bb793dbda6",
+            databaseURL: "https://wine-pairing-b687e-default-rtdb.firebaseio.com/"
+        };
+        
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        
+        // Function to search for a dish and fetch its wine pairing
+        window.searchDish = async function(dishName) {
+            console.log("Searching for dish:", dishName); // Debug log
+            try {
+                const menuRef = ref(db, 'menu/');
+                const menuQuery = query(menuRef, orderByChild('dish_name'), equalTo(dishName));
+                const snapshot = await get(menuQuery);
+
+                const resultText = document.getElementById("result-text");
+                const wineContainer = document.getElementById("wine-container");
+
+                // Debug: Log the snapshot to check if it exists and its data
+                console.log('Snapshot exists:', snapshot.exists());
+                console.log('Snapshot data:', snapshot.val());
+
+                // Clear previous results
+                wineContainer.innerHTML = "";
+
+                // Check if snapshot exists and has valid data
+                if (snapshot.exists()) {
+                    const dish = snapshot.val();
+                    const dishKey = Object.keys(dish)[0]; // Get the first dish
+                    const dishInfo = dish[dishKey];
+
+                    resultText.textContent = `The wine pairings for "${dishName}" are:`;
+
+                    // Ensure that the 'wine' property exists in the dish data
+                    if (dishInfo.wines) {
+                        // Loop through all the wines associated with the dish
+                        Object.keys(dishInfo.wines).forEach(key => {
+                            const wine = dishInfo.wines[key];
+                            const wineElement = document.createElement("div");
+                            wineElement.classList.add("wine-pairing");
+
+                            const wineName = document.createElement("h3");
+                            wineName.textContent = wine.wine_name;
+                            wineElement.appendChild(wineName);
+
+                            const wineImage = document.createElement("img");
+                            wineImage.src = wine.wine_image;
+                            wineImage.alt = `${wine.wine_name} Image`;
+                            wineImage.width = 200;
+                            wineElement.appendChild(wineImage);
+
+                            const wineInfo = document.createElement("p");
+                            wineInfo.textContent = wine.wine_info;
+                            wineElement.appendChild(wineInfo);
+
+                            wineContainer.appendChild(wineElement);
+                        });
+                    } else {
+                        resultText.textContent = `No wine pairings available for "${dishName}".`;
+                    }
+                } else {
+                    resultText.textContent = `No wine pairing found for "${dishName}".`;
+                }
+            } catch (error) {
+                console.error('Error fetching wine pairing:', error);
+                document.getElementById("result-text").textContent = "An error occurred while fetching wine pairing details: " + error.message;
+            }
+        };
+    </script>
 </head>
+
 <body class="search">
     <section class="text">
-        <h1>Unizulu Restaurant Wine Paring</h1>
+        <h1>Unizulu Restaurant Wine Pairing</h1>
     </section>
+
     <div class="boxs">
-        <input type="text" placeholder="Dish name" required>
-      </div>
-      <br>
-      <br>
-      <button type="submit" class="searchbtn">Search</button> 
+        <input type="text" id="dish-name" placeholder="Dish name" required>
+    </div>
+
+    <br><br>
+
+    <button type="button" class="searchbtn" id="search-button">Search</button>
+
+    <section class="results">
+        <p id="result-text">Enter a dish name and click "Search" to find wine pairings.</p>
+        <div id="wine-container"></div> <!-- Container for displaying wine pairings -->
+    </section>
+
+    <script>
+        // Search button event listener
+        document.getElementById("search-button").addEventListener("click", () => {
+            const dishName = document.getElementById("dish-name").value.trim();
+
+            if (dishName) {
+                console.log("Dish Name:", dishName); // Debugging log
+                searchDish(dishName);  // Call the function to search the dish in Firebase
+            } else {
+                alert("Please enter a dish name.");
+            }
+        });
+    </script>
 </body>
 </html>
+
